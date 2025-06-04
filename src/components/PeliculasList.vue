@@ -5,6 +5,8 @@ import { useRouter } from 'vue-router'
 
 const peliculas = ref([])
 const router = useRouter()
+const ordenTituloAsc = ref(true)
+const ordenFechaAsc = ref(true)
 
 const obtenerPeliculas = async (orden = null) => {
   try {
@@ -30,6 +32,17 @@ const obtenerPeliculasDesdeFecha = async (orden) => {
     console.error('Error al ordenar por fecha:', error)
   }
 }
+const toggleOrdenTitulo = () => {
+  const orden = ordenTituloAsc.value ? 'asc' : 'desc'
+  obtenerPeliculas(orden)
+  ordenTituloAsc.value = !ordenTituloAsc.value
+}
+
+const toggleOrdenFecha = () => {
+  const orden = ordenFechaAsc.value ? 'asc' : 'desc'
+  ordenarPorFecha(orden)
+  ordenFechaAsc.value = !ordenFechaAsc.value
+}
 
 
 
@@ -48,13 +61,13 @@ const ordenarDesc = () => obtenerPeliculas('desc')
 
 <template>
   <div class="principal">
-    <button class="ordenar" @click="ordenarAsc">Title A-Z</button>
-    <button class="ordenar" @click="ordenarDesc">Title Z-A</button>
-    <button class="ordenar" @click="ordenarPorFecha('asc')"> Year ↑</button>
-    <button class="ordenar" @click="ordenarPorFecha('desc')"> Year ↓</button>
-
-
- </div> 
+    <button class="ordenar" @click="toggleOrdenTitulo">
+      Title {{ ordenTituloAsc ? 'Z-A' : 'A-Z' }}
+    </button>
+    <button class="ordenar" @click="toggleOrdenFecha">
+      Year {{ ordenFechaAsc ? '↓' : '↑' }}
+    </button>
+  </div>
   <div class="GrupoPeliculas">
     <div v-for="pelicula in peliculas" :key="pelicula.id" class="pelicula" @click="irADetalle(pelicula.id)" style="cursor:pointer;">
       <img :src="pelicula.image" alt="Imagen de la película" v-if="pelicula.image" />
